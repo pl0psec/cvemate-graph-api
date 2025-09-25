@@ -1,0 +1,19 @@
+{
+  "name": "plopsec-core-graph",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "dev": "nodemon app.js"
+  },
+  "dependencies": {
+    "@fastify/cors": "^11.1.0",
+    "arangojs": "^10.1.2",
+    "dotenv": "^17.2.2",
+    "fastify": "^5.6.1",
+    "pino-pretty": "^13.1.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
