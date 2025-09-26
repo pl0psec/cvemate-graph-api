@@ -1,0 +1,20 @@
+image:
+  repository: ghcr.io/plopsec-core-graph
+  tag: latest
+  pullPolicy: IfNotPresent
+  pullSecrets:
+    - ghcr-login-secret
+
+service:
+  type: ClusterIP
+  port: 3000
+
+resources: {}
+
+# Secret values (to be set via external secret management or Helm --set-file)
+secrets:
+  ARANGO_URL: ""
+  ARANGO_DB: ""
+  ARANGO_USER: ""
+  ARANGO_PASSWORD: ""
+  PORT: "3000"

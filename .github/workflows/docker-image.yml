@@ -18,6 +18,23 @@ jobs:
     steps:
     - uses: actions/checkout@v5
 
+    # =========================================================================
+    # Docker Image Tagging Strategy (date+SHA, like cvemate-plus)
+    # =========================================================================
+    - name: Generate version tags
+      id: version
+      run: |
+        DATE=$(date -u +'%Y.%m.%d')
+        SHORT_SHA=$(git rev-parse --short=7 HEAD)
+        VERSION_TAG="${DATE}-${SHORT_SHA}"
+        echo "date=${DATE}" >> $GITHUB_OUTPUT
+        echo "sha=${SHORT_SHA}" >> $GITHUB_OUTPUT
+        echo "version=${VERSION_TAG}" >> $GITHUB_OUTPUT
+        TAGS="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${VERSION_TAG}"
+        TAGS="${TAGS},${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest"
+        echo "tags=${TAGS}" >> $GITHUB_OUTPUT
+        echo "Generated version: ${VERSION_TAG}"
+        echo "All tags: ${TAGS}"
     - name: Login to GitHub Container Registry
       if: github.event_name != 'pull_request'
       uses: docker/login-action@v3
@@ -26,14 +43,25 @@ jobs:
         username: ${{ github.repository_owner }}
         password: ${{ secrets.GITHUB_TOKEN }}
 
-    - name: Extract metadata (tags, labels) for Docker
+    - name: Extract metadata (labels) for Docker
       id: meta
       uses: docker/metadata-action@v5
       with:
         images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=raw,value=${{ steps.version.outputs.version }}
+          type=raw,value=latest
+        labels: |
+          org.opencontainers.image.title=plopsec-core-graph
+          org.opencontainers.image.description=plopsec-core-graph Fastify API
+          org.opencontainers.image.version=${{ steps.version.outputs.version }}
+          org.opencontainers.image.created=${{ steps.version.outputs.date }}
+          org.opencontainers.image.revision=${{ steps.version.outputs.sha }}
 
     - name: Build and push
       uses: docker/build-push-action@v6
       with:
+        context: .
         push: ${{ github.event_name != 'pull_request' }}
-        tags: ${{ steps.meta.outputs.tags }}
+        tags: ${{ steps.version.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}

@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "plopsec-core-graph.fullname" . }}
+  labels:
+    app: {{ include "plopsec-core-graph.name" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "plopsec-core-graph.name" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "plopsec-core-graph.name" . }}
+    spec:
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecrets | first }}
+      containers:
+        - name: api
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          envFrom:
+            - secretRef:
+                name: {{ include "plopsec-core-graph.fullname" . }}-secrets
+          ports:
+            - containerPort: 3000
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
