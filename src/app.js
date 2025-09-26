@@ -95,7 +95,7 @@ const datasourcesRoutes = require('./routes/datasources');
 const cveRoutes   = require('./routes/vulnerabilities');
 const cweRoutes   = require('./routes/cwe');
 const cpeRoutes   = require('./routes/cpe');
-const pagesRoutes = require('./routes/pages');
+const pagesRoutes = require('./routes/sitemap');
 
 // Enable CORS for Nuxt frontend
 fastify.register(require('@fastify/cors'), {
@@ -109,7 +109,7 @@ fastify.register(statsRoutes, { prefix: '/api/stats' });
 fastify.register(cveRoutes,   { prefix: '/api/vulnerabilities' });
 fastify.register(cweRoutes,   { prefix: '/api/cwe' });
 fastify.register(cpeRoutes,   { prefix: '/api/cpe' });
-fastify.register(pagesRoutes, { prefix: '/api/pages' });
+fastify.register(pagesRoutes, { prefix: '/api/sitemap' });
 
 // Timing + detailed completion log
 fastify.addHook('onRequest', (req, _reply, done) => {
