@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1.18
+# syntax=docker/dockerfile:1.19
 # Multi-stage minimal image for Fastify API
 # Build stage installs deps with caching
 FROM node:22-alpine AS deps
